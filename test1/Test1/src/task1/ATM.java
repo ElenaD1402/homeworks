@@ -95,6 +95,7 @@ public class ATM {
                     try {
                         enterPin();
                         withdrawAmount(withdrawAmount);
+                        System.out.println("Please collect your money");
                     } catch (CardIsNotInsertedException | BlockedException | NegativeBalanceException ex1) {
                         System.out.println(ex1.getMessage());
                     } finally {
@@ -107,6 +108,7 @@ public class ATM {
                     try {
                         enterPin();
                         depositAmount(depositAmount);
+                        System.out.println("Your money has been successfully deposited");
                     } catch (CardIsNotInsertedException | BlockedException ex1) {
                         System.out.println(ex1.getMessage());
                     } finally {
