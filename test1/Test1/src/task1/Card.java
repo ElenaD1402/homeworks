@@ -1,6 +1,6 @@
 package task1;
 
-import java.util.InputMismatchException;
+import task1.exceptions.*;
 
 public abstract class Card {
     protected String type;
@@ -9,20 +9,24 @@ public abstract class Card {
     protected double balance;
     protected boolean isBlocked;
 
+    public Card() {
+        this("debit", "Card Holder", "1234", 0.0, false);
+    }
+
     public Card(String type, String cardHolder, String pin, double balance, boolean isBlocked) {
         if (type.equals("debit") || type.equals("credit")) {
             this.type = type;
-        } else throw new InputMismatchException("Card type is invalid.");
+        } else throw new InputTypeMismatchException();
         if (cardHolder.matches("[A-Za-z]{0,15}\\s[A-Za-z]{0,15}")) {
             this.cardHolder = cardHolder;
-        } else throw new InputMismatchException("Cardholder name is invalid.");
+        } else throw new InputNameMismatchException();
         if (pin.matches("[0-9]{4}")) {
             this.pin = pin;
-        } else throw new InputMismatchException("PIN code is invalid.");
+        } else throw new InputCodeMismatchException();
         if (type.equals("debit")) {
             if (balance >= 0) {
                 this.balance = balance;
-            } else throw new InputMismatchException("Balance cannot be negative for debit card.");
+            } else throw new InputBalanceMismatchException();
         } else {
             this.balance = balance;
         }
@@ -49,30 +53,19 @@ public abstract class Card {
         return isBlocked;
     }
 
-    public void checkBalance() {
-        if (!isBlocked) {
-            System.out.println("Your balance is " + this.getBalance() + " BYN");
-        } else {
-            System.out.println("Your card is blocked");
+    public double deposit(double depositAmount) throws BlockedException {
+        if (isBlocked) {
+            throw new BlockedException();
         }
+        return this.balance += depositAmount;
     }
 
-    public void deposit(double depositAmount) {
-        if (!isBlocked) {
-            this.balance += depositAmount;
-            System.out.println("Your money has been successfully deposited");
-        } else {
-            System.out.println("Your card is blocked");
-        }
-    }
+    public abstract double withdraw(double withdrawAmount) throws BlockedException, NegativeBalanceException;
 
-    public abstract void withdraw(double withdrawAmount);
-
-    public void exchange(double exchangeRate, String currency) {
-        if (!isBlocked) {
-            System.out.println("Your balance is " + this.getBalance() / exchangeRate + " " + currency);
-        } else {
-            System.out.println("Your card is blocked");
+    public double exchange(double exchangeRate, String currency) throws BlockedException {
+        if (isBlocked) {
+            throw new BlockedException();
         }
+        return this.getBalance() / exchangeRate;
     }
 }

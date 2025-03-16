@@ -1,5 +1,9 @@
 package task1;
 
+import task1.exceptions.BlockedException;
+import task1.exceptions.CardIsNotInsertedException;
+import task1.exceptions.NegativeBalanceException;
+
 import java.util.Scanner;
 
 public class ATM {
@@ -16,69 +20,60 @@ public class ATM {
         this.card = null;
     }
 
-    public void enterPin() {
-        if (isCardInserted && !(card.isBlocked)) {
-            Scanner input = new Scanner(System.in);
-            System.out.println("Enter your PIN code:");
-            boolean isPinCorrect = false;
-            int attempt = 3;
-            do {
-                String pin = input.next("[0-9]{4}");
-                attempt--;
-                if (pin.equals(card.getPin())) {
-                    isPinCorrect = true;
-                } else {
-                    System.out.println("Entered PIN code is incorrect. You have " + attempt + " attempts left.");
-                }
-            } while (!isPinCorrect && attempt > 0);
-            if (!isPinCorrect) {
-                card.isBlocked = true;
-                System.out.println("You have entered incorrect PIN code for 3 times. Your card is blocked");
-            }
-        } else if (!isCardInserted) {
-            throw new NullPointerException("Please insert the card");
-        } else {
-            throw new RuntimeException("Your card is blocked");
+    public void enterPin() throws CardIsNotInsertedException, BlockedException {
+        if (!isCardInserted) {
+            throw new CardIsNotInsertedException();
         }
-    }
-
-    public void depositAmount(double depositAmount) {
-        if (isCardInserted && !card.isBlocked) {
-            card.balance += depositAmount;
-            System.out.println("Your money has been successfully deposited");
-        } else if (!isCardInserted) {
-            System.out.println("Please insert the card");
-        } else {
-            System.out.println("Your card is blocked");
+        if (card.isBlocked) {
+            throw new BlockedException();
         }
-    }
-
-    public void withdrawAmount(double withdrawAmount) {
-        if (isCardInserted && !card.isBlocked) {
-            if (card.type.equals("debit")) {
-                if (card.balance >= withdrawAmount) {
-                    card.balance -= withdrawAmount;
-                    System.out.println("Please collect your money");
-                } else {
-                    System.out.println("Sorry! Insufficient Funds");
-                }
-            } else if (card.type.equals("credit")) {
-                card.balance -= withdrawAmount;
-                System.out.println("Please collect your money");
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter your PIN code:");
+        boolean isPinCorrect = false;
+        int attempt = 3;
+        do {
+            String pin = input.nextLine();
+            attempt--;
+            if (pin.equals(card.getPin())) {
+                isPinCorrect = true;
             } else {
-                System.out.println("Your card is blocked");
+                System.out.println("Entered PIN code is incorrect. You have " + attempt + " attempts left.");
             }
+        } while (!isPinCorrect && attempt > 0);
+        if (!isPinCorrect) {
+            card.isBlocked = true;
+            System.out.println("You have entered incorrect PIN code for 3 times.");
         }
     }
 
-    public void displayBalance() {
-        if (isCardInserted && !card.isBlocked) {
-            System.out.println("Your balance is " + card.balance + " BYN");
-        } else if (!isCardInserted) {
-            System.out.println("Please insert the card");
-        } else {
-            System.out.println("Your card is blocked");
+    public void depositAmount(double depositAmount) throws CardIsNotInsertedException, BlockedException {
+        if (!isCardInserted) {
+            throw new CardIsNotInsertedException();
         }
+        if (card.isBlocked) {
+            throw new BlockedException();
+        }
+        card.deposit(depositAmount);
+    }
+
+    public void withdrawAmount(double withdrawAmount) throws CardIsNotInsertedException, BlockedException, NegativeBalanceException {
+        if (!isCardInserted) {
+            throw new CardIsNotInsertedException();
+        }
+        if (card.isBlocked) {
+            throw new BlockedException();
+        }
+        card.withdraw(withdrawAmount);
+    }
+
+    public void displayBalance() throws CardIsNotInsertedException, BlockedException {
+        if (!isCardInserted) {
+            throw new CardIsNotInsertedException();
+        }
+        if (card.isBlocked) {
+            throw new BlockedException();
+        }
+        System.out.println("Your balance is " + card.balance + " BYN");
     }
 
     public void atmStart(Card card) {
@@ -97,21 +92,36 @@ public class ATM {
                 case 1:
                     System.out.println("Enter money to be withdrawn:");
                     double withdrawAmount = scanner.nextDouble();
-                    enterPin();
-                    withdrawAmount(withdrawAmount);
-                    System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    try {
+                        enterPin();
+                        withdrawAmount(withdrawAmount);
+                    } catch (CardIsNotInsertedException | BlockedException | NegativeBalanceException ex1) {
+                        System.out.println(ex1.getMessage());
+                    } finally {
+                        System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    }
                     break;
                 case 2:
                     System.out.println("Enter money to be deposited:");
                     double depositAmount = scanner.nextDouble();
-                    enterPin();
-                    depositAmount(depositAmount);
-                    System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    try {
+                        enterPin();
+                        depositAmount(depositAmount);
+                    } catch (CardIsNotInsertedException | BlockedException ex1) {
+                        System.out.println(ex1.getMessage());
+                    } finally {
+                        System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    }
                     break;
                 case 3:
-                    enterPin();
-                    displayBalance();
-                    System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    try {
+                        enterPin();
+                        displayBalance();
+                    } catch (CardIsNotInsertedException | BlockedException ex1) {
+                        System.out.println(ex1.getMessage());
+                    } finally {
+                        System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    }
                     break;
                 case 4:
                     returnCard();
@@ -121,6 +131,7 @@ public class ATM {
                 default:
                     System.out.println("Invalid Choice");
                     System.out.println("Do you wish to proceed? If \"No\" choose 4 to exit");
+                    break;
             }
         }
         scanner.close();
