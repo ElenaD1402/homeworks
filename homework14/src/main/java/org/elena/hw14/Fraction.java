@@ -5,15 +5,18 @@ public class Fraction {
     private final int denominator;
 
     public Fraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new IllegalArgumentException("Denominator mustn't be equal to 0");
+        }
         this.numerator = numerator;
         this.denominator = denominator;
     }
 
-    private int getNumerator() {
+    public int getNumerator() {
         return numerator;
     }
 
-    private int getDenominator() {
+    public int getDenominator() {
         return denominator;
     }
 
@@ -41,6 +44,8 @@ public class Fraction {
     }
 
     private int nod(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
         while (a != 0 && b != 0) {
             if (a > b)
                 a = a % b;
@@ -57,6 +62,9 @@ public class Fraction {
     }
 
     public Fraction division(double number) {
+        if (number == 0) {
+            throw new IllegalArgumentException("Divider mustn't be equal to 0");
+        }
         Fraction doubleNumber = fromDouble(number);
         return new Fraction(this.getNumerator() * doubleNumber.getDenominator(),
                 this.getDenominator() * doubleNumber.getNumerator());
