@@ -11,13 +11,13 @@ public class ElectronicsCatalogPage extends CatalogPage {
     private static final By PAGE_LOCATOR =
             By.xpath("//div[@class='catalog-navigation-list catalog-navigation-list_active catalog-navigation-list_opened']//div[contains(text(),'Электроника')]");
 
-    private static final By TV_ITEM_LOCATOR =
+    public static final By TV_ITEM_LOCATOR =
             By.xpath("//div[@class='catalog-navigation-list__dropdown']//a[@href='https://catalog.onliner.by/tv']");
 
-    private ElectronicsCatalogMenu electronicsCatalogMenu;
+    private final ElectronicsCatalogMenu electronicsCatalogMenu = new ElectronicsCatalogMenu();
 
     public ElectronicsCatalogPage() {
-        electronicsCatalogMenu = new ElectronicsCatalogMenu();
+        super();
     }
 
     public ElectronicsCatalogMenu getElectronicsCatalogMenu() {
@@ -30,10 +30,9 @@ public class ElectronicsCatalogPage extends CatalogPage {
         return pageElement != null && pageElement.isDisplayed();
     }
 
-    public void openTvItem() {
-        electronicsCatalogMenu.clickItem(ElectronicsCatalogMenuEnum.TV);
+    public void openTvPage(ElectronicsCatalogMenuEnum electronicsCatalogMenuEnum) {
+        electronicsCatalogMenu.clickItem(electronicsCatalogMenuEnum);
         WebElement pageElement = Browser.waitForElementToBeClickable(TV_ITEM_LOCATOR);
         pageElement.click();
     }
-
 }

@@ -2,7 +2,6 @@ package org.elena.hw18.onliner.pages;
 
 import org.elena.hw18.onliner.elements.Button;
 import org.elena.hw18.onliner.elements.CatalogMenu;
-import org.elena.hw18.onliner.elements.TopMenu;
 import org.elena.hw18.onliner.webDriver.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -16,10 +15,10 @@ public class CatalogPage extends BaseOnlinerPage {
     private static final By ALL_MENU_ITEMS_LOCATOR =
             By.xpath("//*[@class='catalog-navigation-classifier']//*[@class='catalog-navigation-classifier__item-title']");
 
-    private CatalogMenu catalogMenu;
+    private final CatalogMenu catalogMenu = new CatalogMenu();
 
     public CatalogPage() {
-        catalogMenu = new CatalogMenu();
+        super();
     }
 
     public CatalogMenu getCatalogMenu() {

@@ -38,4 +38,8 @@ public class Configuration {
     public static String getDownloadDirectory() {
         return properties.get("downloadDirectory").toString();
     }
+
+    public static String getRemoteDriverUrl() {
+        return properties.getProperty("remoteWebDriverUrl");
+    }
 }
