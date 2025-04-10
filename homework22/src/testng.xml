@@ -1,0 +1,8 @@
+<suite name="Suite1" verbose="1" parallel="methods" thread-count="1" data-provider-thread-count="1">
+    <listeners> </listeners>
+    <test name="Nopackage">
+        <classes>
+            <class name="org.elena.hw22.RestAssuredTest"/>
+        </classes>
+    </test>
+</suite>
