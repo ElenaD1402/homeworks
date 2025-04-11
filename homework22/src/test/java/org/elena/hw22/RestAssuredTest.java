@@ -1,10 +1,14 @@
 package org.elena.hw22;
 
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.File;
+
 import static io.restassured.RestAssured.given;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 
 public class RestAssuredTest {
 
@@ -77,5 +81,16 @@ public class RestAssuredTest {
                 .then()
                 .statusCode(200).extract().response();
         System.out.println(response.prettyPrint());
+    }
+
+    @Test
+    public void testJsonSchema() {
+        given().log().all()
+                .header("content-type", ContentType.JSON)
+                .body("{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}")
+                .post("http://jsonplaceholder.typicode.com/posts")
+                .then()
+                .statusCode(201)
+                .body(matchesJsonSchema(new File("src/schema.json"))).log().body();
     }
 }
