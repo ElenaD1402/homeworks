@@ -7,7 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SqlAppWithdrawTest {
@@ -24,12 +23,10 @@ public class SqlAppWithdrawTest {
 
     @Test(dataProvider = "paramsWithdraw")
     public void testWithdraw(TransactionDto transactionDto1, AccountDto accountDto1) {
-        List<AccountDto> accountsDtoListAfterWithdrawExpected = new ArrayList<>();
-        accountsDtoListAfterWithdrawExpected.add(accountDto1);
         SqlApp sqlApp = new SqlApp();
         sqlApp.withdraw(transactionDto1);
         List<TransactionDto> transactionsDtoList = Reader.getTransactions();
-        List<AccountDto> accountsDtoListAfterWithdrawActual = Reader.getAccounts();
+        List<AccountDto> accountsDtoListAfterWithdraw = Reader.getAccounts();
         boolean isNegative = false;
         for (TransactionDto transactionDto : transactionsDtoList) {
             if (transactionDto.getAmount() < 0) {
@@ -40,12 +37,10 @@ public class SqlAppWithdrawTest {
             }
         }
         boolean isEqual = false;
-        for (int i = 0; i < accountsDtoListAfterWithdrawActual.size(); i++) {
-            if (accountsDtoListAfterWithdrawActual.get(i).getName().equals(accountsDtoListAfterWithdrawExpected.get(0).getName())) {
-                if (accountsDtoListAfterWithdrawActual.get(i).equals(accountsDtoListAfterWithdrawExpected.get(0))) {
-                    isEqual = true;
-                    break;
-                }
+        for (AccountDto accountDto : accountsDtoListAfterWithdraw) {
+            if (accountDto.equals(accountDto1)) {
+                isEqual = true;
+                break;
             }
         }
         Assert.assertTrue(isNegative, "Transaction amount is not negative");

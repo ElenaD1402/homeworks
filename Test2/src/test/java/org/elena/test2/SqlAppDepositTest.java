@@ -7,7 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SqlAppDepositTest {
@@ -24,12 +23,10 @@ public class SqlAppDepositTest {
 
     @Test(dataProvider = "paramsDeposit")
     public void testDeposit(TransactionDto transactionDto1, AccountDto accountDto1) {
-        List<AccountDto> accountsDtoListAfterDepositExpected = new ArrayList<>();
-        accountsDtoListAfterDepositExpected.add(accountDto1);
         SqlApp sqlApp = new SqlApp();
         sqlApp.deposit(transactionDto1);
         List<TransactionDto> transactionsDtoList = Reader.getTransactions();
-        List<AccountDto> accountsDtoListAfterDepositActual = Reader.getAccounts();
+        List<AccountDto> accountsDtoListAfterDeposit = Reader.getAccounts();
         boolean isPositive = false;
         for (TransactionDto transactionDto : transactionsDtoList) {
             if (transactionDto.getAmount() > 0) {
@@ -40,12 +37,10 @@ public class SqlAppDepositTest {
             }
         }
         boolean isEqual = false;
-        for (int i = 0; i < accountsDtoListAfterDepositActual.size(); i++) {
-            if (accountsDtoListAfterDepositActual.get(i).getName().equals(accountsDtoListAfterDepositExpected.get(0).getName())) {
-                if (accountsDtoListAfterDepositActual.get(i).equals(accountsDtoListAfterDepositExpected.get(0))) {
-                    isEqual = true;
-                    break;
-                }
+        for (AccountDto accountDto : accountsDtoListAfterDeposit) {
+            if (accountDto.equals(accountDto1)) {
+                isEqual = true;
+                break;
             }
         }
         Assert.assertTrue(isPositive, "Transaction amount is not positive");
