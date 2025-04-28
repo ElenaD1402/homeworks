@@ -57,6 +57,20 @@ public class Browser {
         }
     }
 
+    public static void waitSearching(By locator) {
+        try {
+            WebDriverWait wait = new WebDriverWait(getWebDriver(), Duration.ofSeconds(TIME_OUT_IN_SECONDS));
+            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            WebElement element = getWebDriver().findElement(locator);
+        } catch (NotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public static void scroll(WebElement webElement) {
+        getJavascriptExecutor().executeScript("arguments[0].scrollIntoView();", webElement);
+    }
+
     public static void close() {
         if (webDriver != null) {
             webDriver.quit();

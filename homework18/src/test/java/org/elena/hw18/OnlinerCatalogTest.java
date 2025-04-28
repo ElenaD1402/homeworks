@@ -65,9 +65,9 @@ public class OnlinerCatalogTest {
         electronicsCatalogPage.getElectronicsCatalogMenu().clickItem(ElectronicsCatalogMenuEnum.TV);
         electronicsCatalogPage.openTvPage(ElectronicsCatalogMenuEnum.TV);
         tvPage = new TvPage();
-        Browser.getJavascriptExecutor().executeScript("arguments[0].scrollIntoView();", tvPage.getCityPopup().scrollToCityPopup());
+        Browser.scroll(tvPage.getCityPopup().scrollToCityPopup());
         tvPage.getCityPopup().acceptCityPopup();
-        Browser.getJavascriptExecutor().executeScript("arguments[0].scrollIntoView();", tvPage.getTvMenu().scrollToManufacturer());
+        Browser.scroll(tvPage.getTvMenu().scrollToManufacturer());
         tvPage.getTvMenu().tvManufacturerFilter(nameTvManufacturer);
         tvPage.getTvMenu().waitSearching();
         Assert.assertTrue(tvPage.getTvMenu().tvManufacturerFilterResult(nameTvManufacturer),
