@@ -1,12 +1,12 @@
 /* Tables creation */
 
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
 user_id INTEGER(10) PRIMARY KEY NOT NULL,
 name TEXT(50) NOT NULL,
 address TEXT(255) NULL
 );
 
-CREATE TABLE Accounts (
+CREATE TABLE IF NOT EXISTS Accounts (
 account_id INTEGER(10) NOT NULL,
 user_id INTEGER(10) NOT NULL,
 balance NUMERIC(15,3) NOT NULL DEFAULT 0.000,
@@ -15,7 +15,7 @@ PRIMARY KEY (user_id, currency),
 FOREIGN KEY (user_id) REFERENCES Users (user_id)
 );
 
-CREATE TABLE Transactions (
+CREATE TABLE IF NOT EXISTS Transactions (
 transaction_id INTEGER(10) PRIMARY KEY NOT NULL,
 account_id INTEGER(10) NOT NULL,
 amount NUMERIC(15,3) NOT NULL,
